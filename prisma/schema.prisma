@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id   String    @id
+  username  String    @unique
+  nickname  String?
+  password  String
+  email     String    @unique
+  avatar    String?   @default("avatar.webp")
+  about     String?
+  banner    String?
+  channels  Channel[] @relation("ChannelOwner")
+  userChannels UserChannel[]
+  dmChannels1 DmChannel[] @relation("DmChannelUser1")
+  dmChannels2 DmChannel[] @relation("DmChannelUser2")
+  messages  Message[]
+  dmMessages DmMessage[]
+  invites   Invite[]
+}
+
+model Channel {
+  channel_id String    @id
+  name       String?
+  owner_id   String
+  owner      User      @relation("ChannelOwner", fields: [owner_id], references: [user_id])
+  userChannels UserChannel[]
+  messages   Message[]
+  invites    Invite[]
+}
+
+model DmChannel {
+  channel_id String @id
+  user1_id   String
+  user2_id   String
+  user1      User   @relation("DmChannelUser1", fields: [user1_id], references: [user_id])
+  user2      User   @relation("DmChannelUser2", fields: [user2_id], references: [user_id])
+  dmMessages DmMessage[]
+  @@unique([user1_id, user2_id])
+}
+
+model UserChannel {
+  user_id    String
+  channel_id String
+  user       User    @relation(fields: [user_id], references: [user_id])
+  channel    Channel @relation(fields: [channel_id], references: [channel_id])
+  @@id([user_id, channel_id])
+}
+
+model Message {
+  message_id String  @id
+  channel_id String
+  author     String
+  content    String
+  timestamp  String?
+  channel    Channel @relation(fields: [channel_id], references: [channel_id])
+  user       User    @relation(fields: [author], references: [user_id])
+}
+
+model DmMessage {
+  message_id String    @id
+  channel_id String
+  author     String
+  content    String
+  timestamp  String?
+  channel    DmChannel @relation(fields: [channel_id], references: [channel_id])
+  user       User      @relation(fields: [author], references: [user_id])
+}
+
+model Invite {
+  invite_id  String @id
+  channel_id String
+  user_id    String
+  channel    Channel @relation(fields: [channel_id], references: [channel_id])
+  user       User    @relation(fields: [user_id], references: [user_id])
+}
+
+model Avatar {
+  avatar_hash String @id
+  avatar      Bytes
+}
