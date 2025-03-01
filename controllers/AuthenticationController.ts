@@ -4,12 +4,11 @@ import {
   comparePassword,
   generateSnowflake,
   generateVerificationToken,
+  signJWT,
 } from "../utils/HashUtils";
 import RegisterSchema from "../schemas/RegisterSchema";
 import { PrismaClient } from "@prisma/client";
 import { sendVerificationEmail } from "../utils/EmailUtils";
-import { set } from "zod";
-
 export async function LoginController(req: Request, res: Response) {
   try {
     const data = LoginSchema.safeParse(req.body);
@@ -17,7 +16,8 @@ export async function LoginController(req: Request, res: Response) {
       res.status(400).json({ error: data.error });
       return;
     }
-    const user = await req.app.get("prisma").user.findFirst({
+    const prisma = (await req.app.get("prisma")) as PrismaClient;
+    const user = await prisma.user.findFirst({
       where: {
         email: data.data.email,
       },
@@ -30,7 +30,12 @@ export async function LoginController(req: Request, res: Response) {
       res.status(401).json({ error: "Invalid password" });
       return;
     }
-    res.status(200).cookie("auth", user.token).json(user);
+    const token = signJWT({
+      email: user.email,
+      user_id: user.user_id,
+      password: user.password,
+    });
+    res.status(200).cookie("auth", token).json({ user, token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -91,7 +96,7 @@ export async function VerifyController(req: Request, res: Response) {
       data: { ...user, user_id: generateSnowflake(), nickname: user.username },
     });
     req.app.get("pendingRegistrations").delete(token);
-    res.status(201).json({ message: "User created." });
+    res.status(201).redirect("/login?verified=true");
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
