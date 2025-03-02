@@ -22,6 +22,7 @@ app.get("/api", (req, res) => {
 app.use("/cdn/", CDNRouter);
 app.use("/api/auth/", AuthenticationRouter);
 app.use("/api/account/", AccountRouter);
+app.use("/", (req, res) => {});
 app.use((req, res) => {
   res.status(404).json({ error: "Not Found" });
 });

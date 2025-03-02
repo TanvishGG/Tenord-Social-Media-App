@@ -16,12 +16,12 @@ export async function verifyUser(
   const prisma = res.app.get("prisma") as PrismaClient;
   let user = res.app.get("userCache").get(data.user_id);
   if (!user)
-    user = await prisma.user.findUnique({ where: { email: data.email } });
+    user = await prisma.user.findUnique({ where: { user_id: data.user_id } });
   if (!user) {
     res.clearCookie("auth").status(401).json({ error: "Unauthorized" });
     return;
   }
-  if (user.password !== data.password) {
+  if (!data.signed_at || user.modified >= data.signed_at) {
     res.clearCookie("auth").status(401).json({ error: "Unauthorized" });
     return;
   }

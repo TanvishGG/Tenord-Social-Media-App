@@ -22,6 +22,7 @@ model User {
   avatar    String?   @default("avatar.webp")
   about     String?
   banner    String?
+  modified String? @default("1735669800")
   channels  Channel[] @relation("ChannelOwner")
   userChannels UserChannel[]
   dmChannels1 DmChannel[] @relation("DmChannelUser1")

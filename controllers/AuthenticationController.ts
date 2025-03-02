@@ -37,9 +37,8 @@ export async function LoginController(req: Request, res: Response) {
       return;
     }
     const token = signJWT({
-      email: user.email,
       user_id: user.user_id,
-      password: user.password,
+      signed_at: Date.now().toString(),
     });
     res.status(200).cookie("auth", token).json({ user, token });
   } catch (error) {
@@ -114,6 +113,7 @@ export async function VerifyController(req: Request, res: Response) {
         },
         data: {
           email: tokenData.newEmail,
+          modified: Date.now().toString(),
         },
       });
       req.app.get("pendingVerifications").delete(token);
@@ -128,6 +128,7 @@ export async function VerifyController(req: Request, res: Response) {
         },
         data: {
           password: passwordHash,
+          modified: Date.now().toString(),
         },
       });
       req.app.get("pendingVerifications").delete(token);

@@ -5,4 +5,7 @@ const AccountRouter = Router();
 AccountRouter.get("/", getProfile);
 AccountRouter.patch("/edit", updateProfile);
 
+AccountRouter.use((req, res) => {
+  res.status(404).json({ error: "Not Found" });
+});
 export default AccountRouter;

@@ -31,8 +31,10 @@ export async function updateProfile(req: Request, res: Response) {
       return;
     }
     const prisma = res.app.get("prisma") as PrismaClient;
+    let modified = user.modified;
     if (data.data.password) {
       data.data.password = await hashPassword(data.data.password);
+      modified = Date.now().toString();
     }
     if (data.data.email) {
       const existingEmail = await prisma.user.findFirst({
@@ -109,6 +111,7 @@ export async function updateProfile(req: Request, res: Response) {
         avatar: data.data.avatar ?? user.avatar,
         about: data.data.about ?? user.about,
         banner: data.data.banner ?? user.banner,
+        modified: modified,
       },
     });
     req.app.get("userCache").set(updatedUser.user_id, updatedUser);

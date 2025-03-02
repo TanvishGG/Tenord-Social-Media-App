@@ -51,13 +51,20 @@ export function signJWT(payload: JWTPayload): string {
     throw new Error("[ERROR] JWT_TOKEN NOT PROVIDED");
   return sign(payload, process.env.JWT_SECRET, {
     expiresIn: "5d",
+    algorithm: "RS256",
   });
 }
 export function verifyJWT(token: string): JWTPayload | false {
   if (!token) return false;
-  if (!process.env.JWT_SECRET)
-    throw new Error("[ERROR] JWT_TOKEN NOT PROVIDED");
-  return verify(token, process.env.JWT_SECRET) as JWTPayload;
+  if (!process.env.JWT_PUBLIC)
+    throw new Error("[ERROR] JWT_PUBLIC NOT PROVIDED");
+  try {
+    return verify(token, process.env.JWT_PUBLIC, {
+      algorithms: ["RS256"],
+    }) as JWTPayload;
+  } catch (error) {
+    return false;
+  }
 }
 
 export function generateImageHash(user_id: string): string {
