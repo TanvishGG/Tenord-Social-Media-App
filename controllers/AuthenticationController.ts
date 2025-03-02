@@ -2,13 +2,19 @@ import { Request, Response } from "express";
 import LoginSchema from "../schemas/LoginSchema";
 import {
   comparePassword,
+  generateRandomPassword,
   generateSnowflake,
   generateVerificationToken,
+  hashPassword,
   signJWT,
 } from "../utils/HashUtils";
 import RegisterSchema from "../schemas/RegisterSchema";
 import { PrismaClient } from "@prisma/client";
-import { sendVerificationEmail } from "../utils/EmailUtils";
+import {
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+} from "../utils/EmailUtils";
+import ForgotPasswordSchema from "../schemas/ForgotPasswordSchema";
 export async function LoginController(req: Request, res: Response) {
   try {
     const data = LoginSchema.safeParse(req.body);
@@ -85,18 +91,86 @@ export async function RegisterController(req: Request, res: Response) {
 export async function VerifyController(req: Request, res: Response) {
   try {
     const token = req.params.token as string;
-    console.log(token);
-    const user = req.app.get("pendingRegistrations").get(token);
-    if (!user) {
+    const tokenData = req.app.get("pendingVerifications").get(token);
+    if (!tokenData) {
       res.status(404).json({ error: "Token not found" });
       return;
     }
     const prisma = req.app.get("prisma") as PrismaClient;
-    await prisma.user.create({
-      data: { ...user, user_id: generateSnowflake(), nickname: user.username },
+    if (tokenData.type === "register") {
+      await prisma.user.create({
+        data: {
+          ...tokenData.user,
+          user_id: generateSnowflake(),
+          nickname: tokenData.user.username,
+        },
+      });
+      req.app.get("pendingVerifications").delete(token);
+      res.status(201).redirect("/login?verified=true");
+    } else if (tokenData.type === "email") {
+      await prisma.user.update({
+        where: {
+          email: tokenData.oldEmail,
+        },
+        data: {
+          email: tokenData.newEmail,
+        },
+      });
+      req.app.get("pendingVerifications").delete(token);
+      req.app.get("userCache").delete(tokenData.user_id);
+      res.status(200).redirect("/account");
+    } else if (tokenData.type === "reset-password") {
+      const newPassword = generateRandomPassword();
+      const passwordHash = await hashPassword(newPassword);
+      await prisma.user.update({
+        where: {
+          email: tokenData.email,
+        },
+        data: {
+          password: passwordHash,
+        },
+      });
+      req.app.get("pendingVerifications").delete(token);
+      req.app.get("userCache").delete(tokenData.user_id);
+      res.redirect(`/login?newPassword=${newPassword}`);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function ForgotPasswordController(req: Request, res: Response) {
+  try {
+    const data = ForgotPasswordSchema.safeParse(req.body);
+    if (!data.success) {
+      res.status(400).json({ error: data.error });
+      return;
+    }
+    const prisma = req.app.get("prisma") as PrismaClient;
+    const user = await prisma.user.findFirst({
+      where: {
+        email: data.data.email,
+      },
     });
-    req.app.get("pendingRegistrations").delete(token);
-    res.status(201).redirect("/login?verified=true");
+    if (!user) {
+      res.status(404).json({ error: "Email not found" });
+      return;
+    }
+    const token = generateVerificationToken();
+    req.app.get("pendingVerifications").set(token, {
+      type: "reset-password",
+      email: user.email,
+      user_id: user.user_id,
+    });
+    await sendPasswordResetEmail(user.email, token);
+    setTimeout(
+      () => {
+        req.app.get("pendingVerifications").delete(token);
+      },
+      1000 * 60 * 60 * 24,
+    );
+    res.status(200).json({ message: "Password reset email sent." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

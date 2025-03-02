@@ -91,3 +91,8 @@ model Avatar {
   avatar_hash String @id
   avatar      Bytes
 }
+
+model Banner {
+  banner_hash String @id
+  banner      Bytes
+}

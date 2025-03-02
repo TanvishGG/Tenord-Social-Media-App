@@ -1,5 +1,5 @@
 import { hash, genSalt, compare } from "bcrypt";
-import { randomBytes, randomUUID } from "crypto";
+import { createHash, randomBytes, randomUUID } from "crypto";
 import { DiscordSnowflake } from "@sapphire/snowflake";
 import { sign, verify } from "jsonwebtoken";
 import { JWTPayload } from "../schemas/TypeInterfaces";
@@ -47,12 +47,21 @@ export function generateSnowflake(): string {
 }
 
 export function signJWT(payload: JWTPayload): string {
-  if (!process.env.JWT_TOKEN) throw new Error("[ERROR] JWT_TOKEN NOT PROVIDED");
-  return sign(payload, process.env.JWT_TOKEN, {
+  if (!process.env.JWT_SECRET)
+    throw new Error("[ERROR] JWT_TOKEN NOT PROVIDED");
+  return sign(payload, process.env.JWT_SECRET, {
     expiresIn: "5d",
   });
 }
 export function verifyJWT(token: string): JWTPayload | false {
-  if (!process.env.JWT_TOKEN) throw new Error("[ERROR] JWT_TOKEN NOT PROVIDED");
-  return verify(token, process.env.JWT_TOKEN) as JWTPayload;
+  if (!token) return false;
+  if (!process.env.JWT_SECRET)
+    throw new Error("[ERROR] JWT_TOKEN NOT PROVIDED");
+  return verify(token, process.env.JWT_SECRET) as JWTPayload;
+}
+
+export function generateImageHash(user_id: string): string {
+  return createHash("sha256")
+    .update(user_id + "_" + Date.now())
+    .digest("hex");
 }

@@ -41,6 +41,17 @@ export async function sendPasswordResetEmail(
   await sendEmail(
     to,
     "Reset your password",
-    `Click this link to reset your password: ${process.env.WEBSITE_BASE}/api/auth/reset?token=${token}`,
+    `Click this link to reset your password: ${process.env.WEBSITE_BASE}/api/auth/verify/${token}`,
+  );
+}
+
+export async function sendEmailChangeEmail(
+  to: string,
+  token: string,
+): Promise<void> {
+  await sendEmail(
+    to,
+    "Change your email",
+    `Click this link to change your email: ${process.env.WEBSITE_BASE}/api/auth/verify/${token}`,
   );
 }
