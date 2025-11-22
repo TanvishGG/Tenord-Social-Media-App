@@ -325,7 +325,7 @@ export default function AccountPage() {
                       <div className="flex items-center">
                         <div className="w-20 h-20 rounded-full bg-discord-bg-tertiary mr-4 overflow-hidden">
                           {formData.avatar ? (
-                            <Image src={formData.avatar.startsWith('data:') ? formData.avatar : `http://localhost:8080/cdn/avatar/${formData.avatar}`} alt="Avatar" className="w-full h-full object-cover" width={80} height={80} />
+                            <Image src={formData.avatar.startsWith('data:') ? formData.avatar : `${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${formData.avatar}`} alt="Avatar" className="w-full h-full object-cover" width={80} height={80} />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
                               {user?.username?.[0]?.toUpperCase()}
@@ -511,7 +511,7 @@ export default function AccountPage() {
                         
                         <div className="h-28 bg-discord-bg-tertiary relative">
                           {formData.banner && (
-                            <Image src={formData.banner.startsWith('data:') ? formData.banner : `http://localhost:8080/cdn/banner/${formData.banner}`} alt="Banner" className="w-full h-full object-cover" width={320} height={112} />
+                            <Image src={formData.banner.startsWith('data:') ? formData.banner : `${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/banner/${formData.banner}`} alt="Banner" className="w-full h-full object-cover" width={320} height={112} />
                           )}
                         </div>
 
@@ -520,7 +520,7 @@ export default function AccountPage() {
                           <div className="w-20 h-20 rounded-full bg-discord-bg-primary p-1.5">
                             <div className="w-full h-full rounded-full bg-discord-bg-tertiary overflow-hidden flex items-center justify-center">
                               {formData.avatar ? (
-                                <Image src={formData.avatar.startsWith('data:') ? formData.avatar : `http://localhost:8080/cdn/avatar/${formData.avatar}`} alt="Avatar preview" className="w-full h-full object-cover" width={80} height={80} />
+                                <Image src={formData.avatar.startsWith('data:') ? formData.avatar : `${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${formData.avatar}`} alt="Avatar preview" className="w-full h-full object-cover" width={80} height={80} />
                               ) : (
                                 <span className="text-white text-2xl font-bold">{formData.username?.[0]?.toUpperCase()}</span>
                               )}

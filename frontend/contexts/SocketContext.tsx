@@ -76,7 +76,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated && token) {
-      const newSocket = io('http://localhost:8080', {
+      const newSocket = io(process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080', {
         auth: {
           token,
         },

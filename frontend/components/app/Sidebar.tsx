@@ -208,7 +208,7 @@ export default function Sidebar({ activeChannel, setActiveChannel, activeType, s
                     <div className="w-8 h-8 rounded-full mr-3 relative flex-shrink-0 bg-discord-bg-tertiary flex items-center justify-center overflow-hidden">
                       {avatar ? (
                         <Image
-                          src={`http://localhost:8080/cdn/avatar/${avatar}`}
+                          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${avatar}`}
                           alt="Avatar"
                           width={32}
                           height={32}
@@ -236,7 +236,7 @@ export default function Sidebar({ activeChannel, setActiveChannel, activeType, s
           <div className="w-8 h-8 rounded-full bg-discord-brand flex items-center justify-center mr-2 relative flex-shrink-0 overflow-hidden">
             {user?.avatar ? (
               <Image
-                src={`http://localhost:8080/cdn/avatar/${user.avatar}`}
+                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${user.avatar}`}
                 alt="Me"
                 width={32}
                 height={32}

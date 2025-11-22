@@ -148,7 +148,7 @@ export default function ProfileModal({ isOpen, onClose, userId, channelInfo }: P
                 {user.banner && (
                   <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative overflow-hidden">
                     <Image
-                      src={`http://localhost:8080/cdn/banner/${user.banner}`}
+                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/banner/${user.banner}`}
                       alt="Banner"
                       width={400}
                       height={128}
@@ -173,7 +173,7 @@ export default function ProfileModal({ isOpen, onClose, userId, channelInfo }: P
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 relative overflow-hidden">
                       {user.avatar ? (
                         <Image
-                          src={`http://localhost:8080/cdn/avatar/${user.avatar}`}
+                          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${user.avatar}`}
                           alt="Avatar"
                           width={80}
                           height={80}

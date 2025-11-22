@@ -371,7 +371,7 @@ export default function ChatArea({ activeChannel, activeType, showSidebar, setSh
                 <div className="w-6 h-6 rounded-full mr-2 relative bg-discord-bg-tertiary flex items-center justify-center overflow-hidden flex-shrink-0">
                   {(channel as DmChannel)?.otherUser?.avatar ? (
                     <Image
-                      src={`http://localhost:8080/cdn/avatar/${(channel as DmChannel)?.otherUser?.avatar}`}
+                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${(channel as DmChannel)?.otherUser?.avatar}`}
                       alt="Avatar"
                       width={24}
                       height={24}
@@ -455,7 +455,7 @@ export default function ChatArea({ activeChannel, activeType, showSidebar, setSh
                       >
                         {message.user?.avatar ? (
                           <Image
-                            src={`http://localhost:8080/cdn/avatar/${message.user.avatar}`}
+                            src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${message.user.avatar}`}
                             alt="Avatar"
                             width={40}
                             height={40}
@@ -593,7 +593,7 @@ export default function ChatArea({ activeChannel, activeType, showSidebar, setSh
                         <div className="w-8 h-8 rounded-full mr-3 relative bg-discord-bg-tertiary flex items-center justify-center overflow-hidden">
                           {member.avatar ? (
                             <Image
-                              src={`http://localhost:8080/cdn/avatar/${member.avatar}`}
+                              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${member.avatar}`}
                               alt="Avatar"
                               width={32}
                               height={32}
@@ -632,7 +632,7 @@ export default function ChatArea({ activeChannel, activeType, showSidebar, setSh
                         <div className="w-8 h-8 rounded-full mr-3 bg-discord-bg-tertiary flex items-center justify-center overflow-hidden">
                           {member.avatar ? (
                             <Image
-                              src={`http://localhost:8080/cdn/avatar/${member.avatar}`}
+                              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${member.avatar}`}
                               alt="Avatar"
                               width={32}
                               height={32}
@@ -673,7 +673,7 @@ export default function ChatArea({ activeChannel, activeType, showSidebar, setSh
                       <div className="w-8 h-8 rounded-full mr-3 relative bg-discord-bg-tertiary flex items-center justify-center overflow-hidden">
                         {member.avatar ? (
                           <Image
-                            src={`http://localhost:8080/cdn/avatar/${member.avatar}`}
+                            src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/cdn/avatar/${member.avatar}`}
                             alt="Avatar"
                             width={32}
                             height={32}
