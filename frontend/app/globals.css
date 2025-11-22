@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-rubik), "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "Consolas", "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+  
+  /* Discord Color Palette */
+  --color-discord-bg-primary: #313338;
+  --color-discord-bg-secondary: #2b2d31;
+  --color-discord-bg-tertiary: #1e1f22;
+  --color-discord-bg-accent: #3f4147;
+  --color-discord-bg-floating: #18191c;
+  --color-discord-bg-modifier-hover: rgba(79, 84, 92, 0.16);
+  --color-discord-bg-modifier-active: rgba(79, 84, 92, 0.24);
+  --color-discord-bg-modifier-selected: rgba(79, 84, 92, 0.32);
+
+  --color-discord-text-normal: #dbdee1;
+  --color-discord-text-muted: #949ba4;
+  --color-discord-text-header: #f2f3f5;
+  --color-discord-text-link: #00a8fc;
+  --color-discord-text-positive: #23a559;
+  --color-discord-text-warning: #f0b232;
+  --color-discord-text-danger: #f23f42;
+
+  --color-discord-brand: #5865f2;
+  --color-discord-brand-hover: #4752c4;
+  
+  --color-discord-divider: #1e1f22; /* Using tertiary as divider often */
+}
+
+:root {
+  --background: var(--color-discord-bg-primary);
+  --foreground: var(--color-discord-text-normal);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow: hidden; /* App-like feel */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-discord-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #1a1b1e;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-discord-bg-secondary);
+}

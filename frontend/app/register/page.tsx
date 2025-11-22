@@ -1,0 +1,165 @@
+"use client";
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { authAPI } from '@/lib/api';
+import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
+
+export default function RegisterPage() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      router.push('/app');
+    }
+  }, [isAuthenticated, authLoading, router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await authAPI.register({ username, email, password });
+      setSuccess('Registration successful! Please check your email to verify your account.');
+      
+      setTimeout(() => router.push('/login'), 3000);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-discord-bg-primary">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-discord-brand"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[url('https://assets-global.website-files.com/6257adef93867e56f84d3092/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png')] bg-cover bg-center relative">
+      
+      <div className="absolute inset-0 bg-discord-bg-primary/90 backdrop-blur-sm" />
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="relative z-10 bg-discord-bg-secondary rounded-md p-8 w-full max-w-[480px] shadow-2xl"
+      >
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-discord-text-header mb-2">Create an Account</h1>
+          <p className="text-discord-text-muted">Join the community!</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-discord-text-muted uppercase mb-2 tracking-wide">
+              Username
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-3 py-2.5 bg-discord-bg-tertiary border-none rounded-[3px] text-discord-text-normal placeholder-discord-text-muted focus:outline-none focus:ring-0 h-10"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-discord-text-muted uppercase mb-2 tracking-wide">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2.5 bg-discord-bg-tertiary border-none rounded-[3px] text-discord-text-normal placeholder-discord-text-muted focus:outline-none focus:ring-0 h-10"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-discord-text-muted uppercase mb-2 tracking-wide">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2.5 bg-discord-bg-tertiary border-none rounded-[3px] text-discord-text-normal placeholder-discord-text-muted focus:outline-none focus:ring-0 h-10"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-discord-text-muted uppercase mb-2 tracking-wide">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-3 py-2.5 bg-discord-bg-tertiary border-none rounded-[3px] text-discord-text-normal placeholder-discord-text-muted focus:outline-none focus:ring-0 h-10"
+              required
+            />
+          </div>
+
+          {error && (
+            <div className="text-discord-text-danger text-xs font-medium mt-2">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="text-discord-text-positive text-xs font-medium mt-2">
+              {success}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-discord-brand hover:bg-discord-brand-hover disabled:opacity-50 text-white font-medium py-2.5 rounded-[3px] transition-colors duration-200 focus:outline-none mt-4"
+          >
+            {loading ? 'Creating account...' : 'Continue'}
+          </button>
+        </form>
+
+        <div className="mt-4 text-left">
+          <span className="text-discord-text-muted text-sm">
+            Already have an account?{' '}
+            <Link href="/login" className="text-discord-text-link hover:underline font-medium">
+              Log In
+            </Link>
+          </span>
+        </div>
+      </motion.div>
+    </div>
+  );
+}

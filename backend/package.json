@@ -1,0 +1,43 @@
+{
+  "name": "tenord",
+  "version": "1.0.0",
+  "description": "a social media app inspired by discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --exec ts-node index.ts",
+    "build": "tsc --outDir dist",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write ."
+  },
+  "author": "TanvishGG",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "@sapphire/snowflake": "^3.5.5",
+    "@types/cors": "^2.8.19",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.10.0",
+    "pg": "^8.13.3",
+    "sharp": "^0.33.5",
+    "socket.io": "^4.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/express": "latest",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.5",
+    "@types/nodemailer": "^6.4.17",
+    "prisma": "^6.19.0"
+  }
+}
