@@ -75,7 +75,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-bold text-[#23272a] mb-3">Real-Time Messaging</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Low-latency messaging feels like you're in the same room. See who's typing, edit messages instantly, and express yourself with emojis.
+                  Low-latency messaging feels like you&apos;re in the same room. See who&apos;s typing, edit messages instantly, and express yourself with emojis.
                 </p>
               </div>
 

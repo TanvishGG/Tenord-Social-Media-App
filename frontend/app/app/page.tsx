@@ -54,8 +54,6 @@ export default function AppPage() {
         <ChatArea
           activeChannel={activeChannel}
           activeType={activeType}
-          setActiveChannel={setActiveChannel}
-          setActiveType={setActiveType}
           showSidebar={showSidebar}
           setShowSidebar={setShowSidebar}
         />

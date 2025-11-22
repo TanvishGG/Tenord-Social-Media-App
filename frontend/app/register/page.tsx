@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { authAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import axios from 'axios';
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('');
@@ -47,7 +48,11 @@ export default function RegisterPage() {
       
       setTimeout(() => router.push('/login'), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || 'Registration failed');
+      } else {
+        setError('Registration failed');
+      }
     } finally {
       setLoading(false);
     }

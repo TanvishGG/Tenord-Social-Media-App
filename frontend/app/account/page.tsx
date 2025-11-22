@@ -7,6 +7,8 @@ import { accountAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { LogOut, X, User, Shield } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import axios from 'axios';
 
 export default function AccountPage() {
   const { user, logout, isAuthenticated, loading } = useAuth();
@@ -139,7 +141,7 @@ export default function AccountPage() {
       }
 
       
-      const changedFields: any = {};
+      const changedFields: Record<string, string> = {};
 
       Object.keys(formData).forEach(key => {
         
@@ -163,7 +165,11 @@ export default function AccountPage() {
 
       setMessage('Profile updated successfully!');
     } catch (err: any) {
-      setMessage(err.response?.data?.error || 'Failed to update profile');
+      if (axios.isAxiosError(err)) {
+        setMessage(err.response?.data?.error || 'Failed to update profile');
+      } else {
+        setMessage('Failed to update profile');
+      }
     } finally {
       setSaving(false);
     }
@@ -204,7 +210,7 @@ export default function AccountPage() {
 
       setFormData(prev => ({ ...prev, avatar: base64 }));
       setMessage('Avatar selected successfully!');
-    } catch (err: any) {
+    } catch {
       setMessage('Failed to process avatar file');
     } finally {
       setUploadingAvatar(false);
@@ -241,7 +247,7 @@ export default function AccountPage() {
 
       setFormData(prev => ({ ...prev, banner: base64 }));
       setMessage('Banner selected successfully!');
-    } catch (err: any) {
+    } catch {
       setMessage('Failed to process banner file');
     } finally {
       setUploadingBanner(false);
@@ -319,7 +325,7 @@ export default function AccountPage() {
                       <div className="flex items-center">
                         <div className="w-20 h-20 rounded-full bg-discord-bg-tertiary mr-4 overflow-hidden">
                           {formData.avatar ? (
-                            <img src={formData.avatar.startsWith('data:') ? formData.avatar : `http://localhost:8080/cdn/avatar/${formData.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
+                            <Image src={formData.avatar.startsWith('data:') ? formData.avatar : `http://localhost:8080/cdn/avatar/${formData.avatar}`} alt="Avatar" className="w-full h-full object-cover" width={80} height={80} />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
                               {user?.username?.[0]?.toUpperCase()}
@@ -505,7 +511,7 @@ export default function AccountPage() {
                         
                         <div className="h-28 bg-discord-bg-tertiary relative">
                           {formData.banner && (
-                            <img src={formData.banner.startsWith('data:') ? formData.banner : `http://localhost:8080/cdn/banner/${formData.banner}`} className="w-full h-full object-cover" />
+                            <Image src={formData.banner.startsWith('data:') ? formData.banner : `http://localhost:8080/cdn/banner/${formData.banner}`} alt="Banner" className="w-full h-full object-cover" width={320} height={112} />
                           )}
                         </div>
 
@@ -514,7 +520,7 @@ export default function AccountPage() {
                           <div className="w-20 h-20 rounded-full bg-discord-bg-primary p-1.5">
                             <div className="w-full h-full rounded-full bg-discord-bg-tertiary overflow-hidden flex items-center justify-center">
                               {formData.avatar ? (
-                                <img src={formData.avatar.startsWith('data:') ? formData.avatar : `http://localhost:8080/cdn/avatar/${formData.avatar}`} className="w-full h-full object-cover" />
+                                <Image src={formData.avatar.startsWith('data:') ? formData.avatar : `http://localhost:8080/cdn/avatar/${formData.avatar}`} alt="Avatar preview" className="w-full h-full object-cover" width={80} height={80} />
                               ) : (
                                 <span className="text-white text-2xl font-bold">{formData.username?.[0]?.toUpperCase()}</span>
                               )}

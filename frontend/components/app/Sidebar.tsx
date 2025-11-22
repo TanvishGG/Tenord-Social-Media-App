@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocket } from '@/contexts/SocketContext';
 import { channelsAPI, dmsAPI } from '@/lib/api';
-import { Hash, MessageCircle, Plus, Settings, Mic, Headphones, ChevronDown } from 'lucide-react';
+import { Hash, Plus, Settings, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import CreateChannelModal from '@/components/modals/CreateChannelModal';
 import CreateDMModal from '@/components/modals/CreateDMModal';
@@ -107,7 +108,7 @@ export default function Sidebar({ activeChannel, setActiveChannel, activeType, s
 
   const getDmDisplayName = (dm: DmChannel) => {
     const otherUser = dm.user1_id === user?.user_id ? dm.user2 : dm.user1;
-    return otherUser?.nickname || otherUser?.username || 'Unknown User';
+    return otherUser?.nickname || otherUser?.username || 'any User';
   };
 
   const getDmAvatar = (dm: DmChannel) => {
@@ -206,16 +207,12 @@ export default function Sidebar({ activeChannel, setActiveChannel, activeType, s
                   >
                     <div className="w-8 h-8 rounded-full mr-3 relative flex-shrink-0 bg-discord-bg-tertiary flex items-center justify-center overflow-hidden">
                       {avatar ? (
-                        <img
+                        <Image
                           src={`http://localhost:8080/cdn/avatar/${avatar}`}
                           alt="Avatar"
+                          width={32}
+                          height={32}
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            target.parentElement!.classList.add('bg-discord-brand');
-                            target.parentElement!.innerHTML = `<span class="text-white text-xs font-medium">${getDmDisplayName(dm)[0].toUpperCase()}</span>`;
-                          }}
                         />
                       ) : (
                         <span className="text-xs font-medium">{getDmDisplayName(dm)[0].toUpperCase()}</span>
@@ -238,15 +235,12 @@ export default function Sidebar({ activeChannel, setActiveChannel, activeType, s
         <Link href="/account" className="flex items-center hover:bg-discord-bg-modifier-hover rounded pl-0.5 pr-2 py-1 mr-auto group cursor-pointer min-w-0">
           <div className="w-8 h-8 rounded-full bg-discord-brand flex items-center justify-center mr-2 relative flex-shrink-0 overflow-hidden">
             {user?.avatar ? (
-              <img
+              <Image
                 src={`http://localhost:8080/cdn/avatar/${user.avatar}`}
                 alt="Me"
+                width={32}
+                height={32}
                 className="w-full h-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  target.parentElement!.innerHTML = `<span class="text-white text-xs font-medium">${user?.username?.[0]?.toUpperCase() || 'U'}</span>`;
-                }}
               />
             ) : (
               <span className="text-white text-xs font-medium">

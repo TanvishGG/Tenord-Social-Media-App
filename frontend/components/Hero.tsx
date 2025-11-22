@@ -25,7 +25,7 @@ export default function Hero() {
         return () => {
             clearInterval(interval);
         }
-    }, []);
+    }, [delays, values]);
     return (
         <motion.div
             initial={{ opacity: 0, y: -10 }}

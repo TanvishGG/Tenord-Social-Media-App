@@ -4,7 +4,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocket } from '@/contexts/SocketContext';
 import { channelsAPI, dmsAPI } from '@/lib/api';
-import { Send, Hash, MessageCircle, Edit2, Trash2, Users, Crown, Menu, X, PlusCircle, Gift, Sticker, Smile, Bell, Pin, Inbox, HelpCircle, Search, UserPlus } from 'lucide-react';
+import { Hash, Edit2, Trash2, Users, Menu, X, Smile, UserPlus } from 'lucide-react';
+import Image from 'next/image';
 import InviteModal from '@/components/modals/InviteModal';
 import ProfileModal from '@/components/modals/ProfileModal';
 
@@ -42,11 +43,9 @@ interface DmChannel {
   otherUser?: any;
 }
 
-export default function ChatArea({ activeChannel, setActiveChannel, activeType, setActiveType, showSidebar, setShowSidebar }: {
+export default function ChatArea({ activeChannel, activeType, showSidebar, setShowSidebar }: {
   activeChannel: string | null;
-  setActiveChannel: (id: string) => void;
   activeType: 'channel' | 'dm';
-  setActiveType: (type: 'channel' | 'dm') => void;
   showSidebar: boolean;
   setShowSidebar: (show: boolean) => void;
 }) {
@@ -62,13 +61,32 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
   const [editContent, setEditContent] = useState('');
   const [showMembersSidebar, setShowMembersSidebar] = useState(true); 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedUserChannelInfo, setSelectedUserChannelInfo] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const loadChannel = useCallback(async () => {
+    if (!activeChannel) return;
+    setLoading(true);
+    try {
+      let response;
+      if (activeType === 'channel') {
+        response = await channelsAPI.getById(activeChannel);
+        setChannel(response.data);
+        setMessages(response.data.messages || []);
+      } else {
+        response = await dmsAPI.getById(activeChannel);
+        setChannel(response.data.dm);
+        setMessages(response.data.dm.dmMessages || []);
+      }
+    } catch (error) {
+      console.error('Failed to load channel:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeChannel, activeType]);
 
   useEffect(() => {
     if (activeChannel) {
@@ -81,7 +99,7 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
         socket?.leaveRoom(activeChannel);
       }
     };
-  }, [activeChannel, activeType, socket]);
+  }, [activeChannel, activeType, socket, loadChannel]);
 
   useEffect(() => {
     scrollToBottom();
@@ -171,27 +189,6 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
       }
     };
   }, [socket, activeChannel, user?.user_id]);
-
-  const loadChannel = async () => {
-    if (!activeChannel) return;
-    setLoading(true);
-    try {
-      let response;
-      if (activeType === 'channel') {
-        response = await channelsAPI.getById(activeChannel);
-        setChannel(response.data);
-        setMessages(response.data.messages || []);
-      } else {
-        response = await dmsAPI.getById(activeChannel);
-        setChannel(response.data.dm);
-        setMessages(response.data.dm.dmMessages || []);
-      }
-    } catch (error) {
-      console.error('Failed to load channel:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !activeChannel) return;
@@ -301,26 +298,6 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
     setSelectedUserChannelInfo(null);
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-
-    if (isLeftSwipe && showMembersSidebar) {
-      setShowMembersSidebar(false);
-    }
-  };
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -331,8 +308,8 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
       return (channel as Channel).name || 'Unnamed Channel';
     } else {
       const dm = channel as DmChannel;
-      const otherUser = (dm as any).user1_id === user?.user_id ? dm.user2 : dm.user1;
-      return otherUser?.username || 'Unknown User';
+      const otherUser = dm.user1_id === user?.user_id ? dm.user2 : dm.user1;
+      return otherUser?.username || 'any User';
     }
   };
 
@@ -393,15 +370,12 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
                 
                 <div className="w-6 h-6 rounded-full mr-2 relative bg-discord-bg-tertiary flex items-center justify-center overflow-hidden flex-shrink-0">
                   {(channel as DmChannel)?.otherUser?.avatar ? (
-                    <img
+                    <Image
                       src={`http://localhost:8080/cdn/avatar/${(channel as DmChannel)?.otherUser?.avatar}`}
                       alt="Avatar"
+                      width={24}
+                      height={24}
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        target.parentElement!.innerHTML = `<span class="text-white text-xs font-medium">${(channel as DmChannel)?.otherUser?.username?.[0]?.toUpperCase() || 'U'}</span>`;
-                      }}
                     />
                   ) : (
                     <span className="text-white text-xs font-medium">
@@ -480,15 +454,12 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
                         onClick={() => openProfileModal(message.user)}
                       >
                         {message.user?.avatar ? (
-                          <img
+                          <Image
                             src={`http://localhost:8080/cdn/avatar/${message.user.avatar}`}
                             alt="Avatar"
+                            width={40}
+                            height={40}
                             className="w-full h-full object-cover hover:opacity-80 transition-opacity"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              target.parentElement!.innerHTML = `<span class="text-white text-sm font-medium">${message.user?.username?.[0]?.toUpperCase() || 'U'}</span>`;
-                            }}
                           />
                         ) : (
                           <span className="text-white text-sm font-medium">
@@ -509,7 +480,7 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
                             className="text-discord-text-header font-medium hover:underline cursor-pointer mr-2"
                             onClick={() => openProfileModal(message.user)}
                           >
-                            {message.user?.nickname || message.user?.username || 'Unknown User'}
+                            {message.user?.nickname || message.user?.username || 'any User'}
                           </span>
                           <span className="text-discord-text-muted text-xs">
                             {formatTime(message.timestamp)}
@@ -621,15 +592,12 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
                       >
                         <div className="w-8 h-8 rounded-full mr-3 relative bg-discord-bg-tertiary flex items-center justify-center overflow-hidden">
                           {member.avatar ? (
-                            <img
+                            <Image
                               src={`http://localhost:8080/cdn/avatar/${member.avatar}`}
                               alt="Avatar"
+                              width={32}
+                              height={32}
                               className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                                target.parentElement!.innerHTML = `<span class="text-white text-xs font-medium">${member.username?.[0]?.toUpperCase() || 'U'}</span>`;
-                              }}
                             />
                           ) : (
                             <span className="text-white text-xs font-medium">
@@ -663,15 +631,12 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
                       >
                         <div className="w-8 h-8 rounded-full mr-3 bg-discord-bg-tertiary flex items-center justify-center overflow-hidden">
                           {member.avatar ? (
-                            <img
+                            <Image
                               src={`http://localhost:8080/cdn/avatar/${member.avatar}`}
                               alt="Avatar"
+                              width={32}
+                              height={32}
                               className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                                target.parentElement!.innerHTML = `<span class="text-white text-xs font-medium">${member.username?.[0]?.toUpperCase() || 'U'}</span>`;
-                              }}
                             />
                           ) : (
                             <span className="text-white text-xs font-medium">
@@ -707,15 +672,12 @@ export default function ChatArea({ activeChannel, setActiveChannel, activeType, 
                     >
                       <div className="w-8 h-8 rounded-full mr-3 relative bg-discord-bg-tertiary flex items-center justify-center overflow-hidden">
                         {member.avatar ? (
-                          <img
+                          <Image
                             src={`http://localhost:8080/cdn/avatar/${member.avatar}`}
                             alt="Avatar"
+                            width={32}
+                            height={32}
                             className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              target.parentElement!.innerHTML = `<span class="text-white text-xs font-medium">${member.username?.[0]?.toUpperCase() || 'U'}</span>`;
-                            }}
                           />
                         ) : (
                           <span className="text-white text-xs font-medium">

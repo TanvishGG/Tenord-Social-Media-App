@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { invitesAPI } from '../../lib/api';
 import { X, Copy, Check, Crown, Trash2 } from 'lucide-react';
+import axios from 'axios';
 
 interface InviteModalProps {
     isOpen: boolean;
@@ -25,13 +26,7 @@ export default function InviteModal({
     const [existingInvites, setExistingInvites] = useState<any[]>([]);
     const [loadingInvites, setLoadingInvites] = useState(false);
 
-    useEffect(() => {
-        if (isOpen) {
-            fetchExistingInvites();
-        }
-    }, [isOpen, channelId]);
-
-    const fetchExistingInvites = async () => {
+    const fetchExistingInvites = useCallback(async () => {
         setLoadingInvites(true);
         try {
             const response = await invitesAPI.getChannelInvites(channelId);
@@ -41,7 +36,13 @@ export default function InviteModal({
         } finally {
             setLoadingInvites(false);
         }
-    };
+    }, [channelId]);
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchExistingInvites();
+        }
+    }, [isOpen, channelId, fetchExistingInvites]);
 
     const deleteInvite = async (inviteId: string) => {
         try {
@@ -66,8 +67,11 @@ export default function InviteModal({
                 console.error('Failed to create invite: invalid response');
             }
         } catch (error: any) {
-            
-            console.error('Error creating invite:', error?.response?.data ?? error.message ?? error);
+            if (axios.isAxiosError(error)) {
+                console.error('Error creating invite:', error.response?.data ?? error.message);
+            } else {
+                console.error('Error creating invite:', error);
+            }
         } finally {
             setLoading(false);
         }
@@ -79,7 +83,7 @@ export default function InviteModal({
                 await navigator.clipboard.writeText(`${window.location.origin}/invite/${inviteCode}`);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
-            } catch (error) {
+            } catch {
                 console.error('Failed to copy to clipboard');
             }
         }

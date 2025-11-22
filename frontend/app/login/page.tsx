@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { authAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -32,7 +33,11 @@ export default function LoginPage() {
       login(token, user);
       router.push('/app');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || 'Login failed');
+      } else {
+        setError('Login failed');
+      }
     } finally {
       setLoading(false);
     }
@@ -59,7 +64,7 @@ export default function LoginPage() {
       >
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-discord-text-header mb-2">Welcome Back!</h1>
-          <p className="text-discord-text-muted">We're so excited to see you again!</p>
+          <p className="text-discord-text-muted">We&apos;re so excited to see you again!</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

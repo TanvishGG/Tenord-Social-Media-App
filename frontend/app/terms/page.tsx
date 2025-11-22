@@ -37,7 +37,7 @@ export default function TermsPage() {
                             <li>Use the materials for any commercial purpose or for any public display</li>
                             <li>Attempt to reverse engineer any software contained on Tenord</li>
                             <li>Remove any copyright or other proprietary notations from the materials</li>
-                            <li>Transfer the materials to another person or "mirror" the materials on any other server</li>
+                            <li>Transfer the materials to another person or &quot;mirror&quot; the materials on any other server</li>
                         </ul>
                     </section>
 
@@ -70,7 +70,7 @@ export default function TermsPage() {
                             <li>In any way that violates any applicable national or international law or regulation</li>
                             <li>To transmit, or procure the sending of, any advertising or promotional material without our prior written consent</li>
                             <li>To impersonate or attempt to impersonate the Company, a Company employee, another user, or any other person or entity</li>
-                            <li>To engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the service</li>
+                            <li>To engage in any other conduct that restricts or inhibits anyone&apos;s use or enjoyment of the service</li>
                             <li>To harass, abuse, insult, harm, defame, slander, disparage, intimidate, or discriminate</li>
                         </ul>
                     </section>
@@ -102,7 +102,7 @@ export default function TermsPage() {
                     <section className="mb-8">
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">9. Disclaimer</h2>
                         <p className="text-gray-700 leading-relaxed mb-4">
-                            Your use of the service is at your sole risk. The service is provided on an "AS IS" and "AS AVAILABLE" basis. The service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement or course of performance.
+                            Your use of the service is at your sole risk. The service is provided on an &#34;AS IS&#34; and &#34;AS AVAILABLE&#34; basis. The service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement or course of performance.
                         </p>
                     </section>
 

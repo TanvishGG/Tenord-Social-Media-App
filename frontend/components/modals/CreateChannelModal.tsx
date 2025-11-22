@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Hash } from 'lucide-react';
 import { channelsAPI } from '@/lib/api';
+import axios from 'axios';
 
 interface CreateChannelModalProps {
   isOpen: boolean;
@@ -29,7 +30,11 @@ export default function CreateChannelModal({ isOpen, onClose, onChannelCreated }
       onChannelCreated();
       onClose();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to create channel');
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || 'Failed to create channel');
+      } else {
+        setError('Failed to create channel');
+      }
     } finally {
       setLoading(false);
     }
@@ -83,7 +88,7 @@ export default function CreateChannelModal({ isOpen, onClose, onChannelCreated }
                   />
                 </div>
                 <p className="text-xs text-discord-text-muted mt-1">
-                  Channels are where your team communicates. They're best organized around a topic.
+                  Channels are where your team communicates. They&apos;re best organized around a topic.
                 </p>
               </div>
 

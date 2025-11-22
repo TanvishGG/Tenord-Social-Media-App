@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { authAPI } from '@/lib/api';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -21,7 +22,11 @@ export default function ForgotPasswordPage() {
       await authAPI.forgotPassword({ email });
       setSuccess('Password reset email sent! Check your inbox.');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to send reset email');
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || 'Failed to send reset email');
+      } else {
+        setError('Failed to send reset email');
+      }
     } finally {
       setLoading(false);
     }

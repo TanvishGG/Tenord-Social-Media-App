@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { invitesAPI } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { Hash, Users, AlertCircle, CheckCircle } from 'lucide-react';
+import { Hash, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import axios from 'axios';
+import Image from 'next/image';
 
 export default function InvitePage() {
     const params = useParams();
     const router = useRouter();
-    const { isAuthenticated, user, loading: authLoading } = useAuth();
+    const { isAuthenticated, loading: authLoading } = useAuth();
     const inviteCode = params.code as string;
 
     const [invite, setInvite] = useState<any>(null);
@@ -18,22 +20,26 @@ export default function InvitePage() {
     const [error, setError] = useState('');
     const [joining, setJoining] = useState(false);
 
-    useEffect(() => {
-        if (inviteCode) {
-            fetchInvite();
-        }
-    }, [inviteCode]);
-
-    const fetchInvite = async () => {
+    const fetchInvite = useCallback(async () => {
         try {
             const response = await invitesAPI.getInvite(inviteCode);
             setInvite(response.data.invite);
         } catch (err: any) {
-            setError(err.response?.data?.error || 'Invalid or expired invite');
+            if (axios.isAxiosError(err)) {
+                setError(err.response?.data?.error || 'Invalid or expired invite');
+            } else {
+                setError('Invalid or expired invite');
+            }
         } finally {
             setInviteLoading(false);
         }
-    };
+    }, [inviteCode]);
+
+    useEffect(() => {
+        if (inviteCode) {
+            fetchInvite();
+        }
+    }, [inviteCode, fetchInvite]);
 
     const handleJoin = async () => {
         if (!isAuthenticated) {
@@ -47,7 +53,11 @@ export default function InvitePage() {
             await invitesAPI.accept(inviteCode);
             router.push('/app');
         } catch (err: any) {
-            setError(err.response?.data?.error || 'Failed to join channel');
+            if (axios.isAxiosError(err)) {
+                setError(err.response?.data?.error || 'Failed to join channel');
+            } else {
+                setError('Failed to join channel');
+            }
             setJoining(false);
         }
     };
@@ -85,10 +95,12 @@ export default function InvitePage() {
             <div className="bg-discord-bg-secondary p-8 rounded-lg shadow-2xl max-w-md w-full animate-in fade-in zoom-in duration-300">
                 <div className="text-center mb-6">
                     {invite?.channel?.icon ? (
-                        <img
+                        <Image
                             src={invite.channel.icon}
                             alt={invite.channel.name}
                             className="w-24 h-24 rounded-full mx-auto mb-4 object-cover shadow-md"
+                            width={96}
+                            height={96}
                         />
                     ) : (
                         <div className="w-24 h-24 bg-discord-bg-tertiary rounded-full mx-auto mb-4 flex items-center justify-center shadow-md">
@@ -96,9 +108,9 @@ export default function InvitePage() {
                         </div>
                     )}
 
-                    <p className="text-discord-text-muted text-sm uppercase font-bold mb-2">You've been invited to join</p>
+                    <p className="text-discord-text-muted text-sm uppercase font-bold mb-2">You&apos;ve been invited to join</p>
                     <h1 className="text-2xl font-bold text-discord-text-header mb-2 flex items-center justify-center">
-                        {invite?.channel?.name || 'Unknown Channel'}
+                        {invite?.channel?.name || 'any Channel'}
                     </h1>
 
                     <div className="flex items-center justify-center space-x-4 text-discord-text-muted text-sm">

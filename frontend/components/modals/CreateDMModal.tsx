@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User } from 'lucide-react';
 import { dmsAPI } from '@/lib/api';
+import axios from 'axios';
 
 interface CreateDMModalProps {
   isOpen: boolean;
@@ -29,7 +30,11 @@ export default function CreateDMModal({ isOpen, onClose, onDmCreated }: CreateDM
       onDmCreated();
       onClose();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to create DM');
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || 'Failed to create DM');
+      } else {
+        setError('Failed to create DM');
+      }
     } finally {
       setLoading(false);
     }

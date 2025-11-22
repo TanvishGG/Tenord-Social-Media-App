@@ -23,7 +23,7 @@ export default function GuidelinesPage() {
                     <section className="mb-8">
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
                         <p className="text-gray-700 leading-relaxed mb-4">
-                            Tenord is a place where you can belong to a community, collaborate with friends, and connect with people who share your interests. We want to make sure everyone has a positive experience, so we've established these Community Guidelines.
+                            Tenord is a place where you can belong to a community, collaborate with friends, and connect with people who share your interests. We want to make sure everyone has a positive experience, so we&apos;ve established these Community Guidelines.
                         </p>
                     </section>
 
@@ -36,8 +36,8 @@ export default function GuidelinesPage() {
                             <li>No harassment, bullying, or hate speech</li>
                             <li>Respect different opinions and perspectives</li>
                             <li>Be kind and considerate in your interactions</li>
-                            <li>Don't engage in personal attacks or insults</li>
-                            <li>Respect people's privacy and personal boundaries</li>
+                            <li>Don&apos;t engage in personal attacks or insults</li>
+                            <li>Respect people&apos;s privacy and personal boundaries</li>
                         </ul>
                     </section>
 
@@ -62,10 +62,10 @@ export default function GuidelinesPage() {
                             Authenticity is important to us. This means:
                         </p>
                         <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                            <li>Don't impersonate others or create fake accounts</li>
-                            <li>Don't spread misinformation or fake news</li>
+                            <li>Don&apos;t impersonate others or create fake accounts</li>
+                            <li>Don&apos;t spread misinformation or fake news</li>
                             <li>Be transparent about your identity and intentions</li>
-                            <li>Don't engage in deceptive practices</li>
+                            <li>Don&apos;t engage in deceptive practices</li>
                         </ul>
                     </section>
 
@@ -75,10 +75,10 @@ export default function GuidelinesPage() {
                             Give credit where credit is due:
                         </p>
                         <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                            <li>Don't share copyrighted content without permission</li>
+                            <li>Don&apos;t share copyrighted content without permission</li>
                             <li>Respect trademarks and brand identities</li>
                             <li>Credit original creators when sharing their work</li>
-                            <li>Don't plagiarize or claim others' work as your own</li>
+                            <li>Don&apos;t plagiarize or claim others&apos; work as your own</li>
                         </ul>
                     </section>
 
@@ -88,9 +88,9 @@ export default function GuidelinesPage() {
                             Keep conversations meaningful:
                         </p>
                         <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                            <li>Don't send unsolicited advertisements or promotions</li>
+                            <li>Don&apos;t send unsolicited advertisements or promotions</li>
                             <li>Avoid excessive self-promotion</li>
-                            <li>Don't post repetitive or irrelevant content</li>
+                            <li>Don&apos;t post repetitive or irrelevant content</li>
                             <li>Respect channel topics and stay on-topic</li>
                         </ul>
                     </section>
@@ -115,7 +115,7 @@ export default function GuidelinesPage() {
                         </p>
                         <ul className="list-disc pl-6 space-y-2 text-gray-700">
                             <li>Never share content that sexualizes minors</li>
-                            <li>Don't engage in predatory behavior toward minors</li>
+                            <li>Don&apos;t engage in predatory behavior toward minors</li>
                             <li>Report any concerning behavior immediately</li>
                             <li>Age-restricted content must be clearly marked</li>
                         </ul>
@@ -130,7 +130,7 @@ export default function GuidelinesPage() {
                             <li>Use the report feature to flag inappropriate content</li>
                             <li>Contact server moderators for server-specific issues</li>
                             <li>Reach out to our support team for serious violations</li>
-                            <li>Don't engage with or retaliate against violators</li>
+                            <li>Don&apos;t engage with or retaliate against violators</li>
                         </ul>
                     </section>
 
@@ -153,7 +153,7 @@ export default function GuidelinesPage() {
                     <section className="mb-8">
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Updates to Guidelines</h2>
                         <p className="text-gray-700 leading-relaxed mb-4">
-                            We may update these guidelines from time to time to reflect changes in our community or legal requirements. We'll notify users of significant changes.
+                            We may update these guidelines from time to time to reflect changes in our community or legal requirements. We&apos;ll notify users of significant changes.
                         </p>
                     </section>
 

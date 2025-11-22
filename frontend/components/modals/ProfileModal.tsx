@@ -2,8 +2,10 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Crown, Shield, User, MessageCircle, Loader2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { usersAPI } from '@/lib/api';
+import axios from 'axios';
+import Image from 'next/image';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -32,6 +34,25 @@ export default function ProfileModal({ isOpen, onClose, userId, channelInfo }: P
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchUserProfile = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await usersAPI.getProfile(userId);
+      setUser(response.data);
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || 'Failed to load profile');
+        console.error('Failed to fetch user profile:', err);
+      } else {
+        setError('Failed to load profile');
+        console.error('Failed to fetch user profile:', err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
   useEffect(() => {
     if (isOpen && userId) {
       fetchUserProfile();
@@ -39,24 +60,10 @@ export default function ProfileModal({ isOpen, onClose, userId, channelInfo }: P
       setUser(null);
       setError(null);
     }
-  }, [isOpen, userId]);
-
-  const fetchUserProfile = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await usersAPI.getProfile(userId);
-      setUser(response.data);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to load profile');
-      console.error('Failed to fetch user profile:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [isOpen, userId, fetchUserProfile]);
 
   const formatDate = (timestamp?: string) => {
-    if (!timestamp) return 'Unknown';
+    if (!timestamp) return 'any';
     try {
       
       const numTimestamp = parseInt(timestamp);
@@ -76,7 +83,7 @@ export default function ProfileModal({ isOpen, onClose, userId, channelInfo }: P
         });
       }
     } catch {
-      return 'Unknown';
+      return 'any';
     }
   };
 
@@ -140,15 +147,12 @@ export default function ProfileModal({ isOpen, onClose, userId, channelInfo }: P
                 
                 {user.banner && (
                   <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative overflow-hidden">
-                    <img
+                    <Image
                       src={`http://localhost:8080/cdn/banner/${user.banner}`}
                       alt="Banner"
+                      width={400}
+                      height={128}
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                      }}
                     />
                   </div>
                 )}
@@ -168,19 +172,12 @@ export default function ProfileModal({ isOpen, onClose, userId, channelInfo }: P
                   <div className="flex flex-col items-center mb-6">
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 relative overflow-hidden">
                       {user.avatar ? (
-                        <img
+                        <Image
                           src={`http://localhost:8080/cdn/avatar/${user.avatar}`}
                           alt="Avatar"
+                          width={80}
+                          height={80}
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-                            
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `<span class="text-white text-2xl font-bold">${user.username?.[0]?.toUpperCase() || 'U'}</span>`;
-                            }
-                          }}
                         />
                       ) : (
                         <span className="text-white text-2xl font-bold">

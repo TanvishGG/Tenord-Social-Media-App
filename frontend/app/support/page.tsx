@@ -59,7 +59,7 @@ export default function SupportPage() {
               <div>
                 <h4 className="text-white font-medium mb-2">How do I create an account?</h4>
                 <p className="text-gray-300">
-                  Click the "Sign me up!" button on our homepage and fill out the registration form.
+                  Click the &quot;Sign me up!&quot; button on our homepage and fill out the registration form.
                 </p>
               </div>
 
